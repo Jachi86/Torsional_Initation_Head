@@ -1,5 +1,5 @@
 [README.md](https://github.com/user-attachments/files/32292376/README.md)
-# Torsion Solver V6
+# Torsion Initiation Solver V1 - 2026.09.16
 
 Applicazione web standalone per l'analisi dell'equilibrio torsionale non lineare di un tubo circolare incastrato in **A**, con carichi applicati in **B**.
 
