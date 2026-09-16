@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Torsion Solver V6</title>
+
+    <!--
+      Versione testuale indentata del sorgente HTML.
+      Modello: (GJ/L) theta = M_CABLE + W d sin(theta)
+      Convenzione: theta = 0 gradi con W sopra B.
+    -->
+
+    <style>
+      :root {
+        --blue: #2563eb;
+        --violet: #7c3aed;
+        --green: #067647;
+        --red: #b42318;
+        --background: #f4f7fb;
+        --text: #172033;
+        --muted: #667085;
+        --border: #e4e7ec;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      main {
+        max-width: 1450px;
+        margin: auto;
+        padding: 22px;
+      }
+
+      .header,
+      .field-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .card {
+        padding: 18px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        box-shadow: 0 4px 14px #1018280d;
+      }
+
+      .field {
+        margin: 13px 0;
+      }
+
+      .field input[type="number"] {
+        width: 105px;
+        padding: 7px;
+        text-align: right;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+      }
+
+      .field input[type="range"] {
+        width: 100%;
+        accent-color: var(--blue);
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .kpi small {
+        color: var(--muted);
+        font-size: 10px;
+        text-transform: uppercase;
+      }
+
+      .kpi strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 18px;
+      }
+
+      .sketches,
+      .plots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .wide {
+        grid-column: 1 / -1;
+      }
+
+      .plot {
+        height: 300px;
+      }
+
+      .moment-plot {
+        height: 390px;
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+
+      .equations {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 9px;
+      }
+
+      .equation {
+        padding: 12px;
+        background: #f2f4f7;
+        border-radius: 9px;
+        font: 13px Consolas, monospace;
+      }
+
+      .stable {
+        color: var(--green);
+      }
+
+      .unstable {
+        color: var(--red);
+      }
+
+      @media (max-width: 1000px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .kpis {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <header class="header">
+        <div>
+          <small>TORSIONE NON LINEARE - V6</small>
+          <h1>Tubo incastrato in A, carichi in B</h1>
+          <p>Convenzione: theta = 0 gradi con W sopra B.</p>
+        </div>
+        <button id="reset">Ripristina</button>
+      </header>
+
+      <div class="layout">
+        <aside class="card">
+          <h2>Dati di input</h2>
+          <div id="fields"></div>
+        </aside>
+
+        <section class="content">
+          <div id="error"></div>
+          <div id="kpis" class="kpis"></div>
+
+          <div class="card">
+            <h2>Schema meccanico</h2>
+
+            <div class="sketches">
+              <div>
+                <h3>Schema statico longitudinale</h3>
+                <svg viewBox="0 0 700 245">
+                  <line x1="70" y1="35" x2="70" y2="210" stroke="#344054" stroke-width="4" />
+                  <line x1="70" y1="150" x2="540" y2="150" stroke="#98a2b3" stroke-width="15" />
+                  <circle cx="540" cy="150" r="24" fill="#ffffff" stroke="#344054" />
+                  <line x1="540" y1="150" x2="540" y2="50" stroke="#344054" stroke-width="6" />
+                  <circle cx="540" cy="50" r="18" fill="#fdb022" stroke="#b54708" />
+                  <text x="54" y="235">A</text>
+                  <text x="530" y="180">B</text>
+                  <text x="555" y="80" fill="#b42318">W</text>
+                  <text x="620" y="105">d</text>
+                  <text x="500" y="230" fill="#2563eb">
+                    M<tspan baseline-shift="sub" font-size="10">CABLE</tspan>
+                  </text>
+                </svg>
+              </div>
+
+              <div>
+                <h3>Sezione trasversale in B</h3>
+                <svg viewBox="0 0 430 245">
+                  <circle cx="205" cy="130" r="25" fill="#ffffff" stroke="#344054" />
+                  <line id="arm" x1="205" y1="130" x2="205" y2="25" stroke="#344054" stroke-width="6" />
+                  <circle id="ball" cx="205" cy="25" r="17" fill="#fdb022" stroke="#b54708" />
+                  <line id="weightArrow" x1="205" y1="25" x2="205" y2="58" stroke="#b42318" stroke-width="3" />
+                  <text id="thetaLabel" x="245" y="78" fill="#7c3aed">theta</text>
+                  <text x="197" y="136">B</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="equations">
+              <div class="equation">G = E / [2(1 + nu)]</div>
+              <div class="equation">J = pi/32 [OD^4 - (OD - 2WT)^4]</div>
+              <div class="equation">(GJ/L) theta = M_CABLE + Wd sin(theta)</div>
+            </div>
+
+            <div id="stabilityCriterion" class="equation"></div>
+          </div>
+
+          <div class="plots">
+            <div class="card">
+              <h3>Momento torcente lungo A-B</h3>
+              <div class="plot"><canvas id="torqueChart"></canvas></div>
+            </div>
+
+            <div class="card">
+              <h3>Angolo di torsione lungo A-B</h3>
+              <div class="plot"><canvas id="angleChart"></canvas></div>
+            </div>
+
+            <div class="card wide">
+              <h3>Momenti vs theta</h3>
+              <div class="moment-plot"><canvas id="momentChart"></canvas></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const defaults = {
+        OD: 323.9,
+        WT: 12.7,
+        L: 10,
+        E: 210,
+        nu: 0.3,
+        W: 100,
+        d: 1,
+        MCABLE: 100
+      };
+
+      const inputDefinitions = [
+        ["OD", "OD", "mm", 20, 1500, 0.1],
+        ["WT", "WT", "mm", 0.5, 100, 0.1],
+        ["L", "L", "m", 0.1, 100, 0.1],
+        ["E", "E", "GPa", 1, 500, 0.5],
+        ["nu", "nu", "-", -0.99, 0.499, 0.001],
+        ["W", "W", "kN", 0, 5000, 1],
+        ["d", "d", "m", 0, 20, 0.01],
+        ["MCABLE", "M_CABLE", "kN m", -10000, 10000, 1]
+      ];
+
+      function value(id) {
+        return Number(document.getElementById(`${id}Number`).value);
+      }
+
+      function degrees(radians) {
+        return radians * 180 / Math.PI;
+      }
+
+      function integer(valueToRound) {
+        return Math.round(valueToRound).toLocaleString("it-IT", {
+          maximumFractionDigits: 0
+        });
+      }
+
+      function lambdaFormat(valueToFormat) {
+        return valueToFormat.toLocaleString("it-IT", {
+          minimumFractionDigits: 4,
+          maximumFractionDigits: 4
+        });
+      }
+
+      function solveEquilibria(k, gravityAmplitude, cableMoment) {
+        const residual = theta =>
+          k * theta - cableMoment - gravityAmplitude * Math.sin(theta);
+
+        const roots = [];
+        const lower = -2 * Math.PI;
+        const upper = 2 * Math.PI;
+        const samples = 16000;
+        let x0 = lower;
+        let y0 = residual(x0);
+
+        for (let index = 1; index <= samples; index += 1) {
+          const x1 = lower + (upper - lower) * index / samples;
+          const y1 = residual(x1);
+
+          if (y0 * y1 < 0 || Math.abs(y0) < 1e-7) {
+            let left = x0;
+            let right = x1;
+            let fLeft = residual(left);
+
+            for (let iteration = 0; iteration < 80; iteration += 1) {
+              const middle = (left + right) / 2;
+              const fMiddle = residual(middle);
+
+              if (fLeft * fMiddle <= 0) {
+                right = middle;
+              } else {
+                left = middle;
+                fLeft = fMiddle;
+              }
+            }
+
+            const theta = (left + right) / 2;
+            if (!roots.some(root => Math.abs(root.theta - theta) < 1e-6)) {
+              roots.push({
+                theta,
+                stable: k - gravityAmplitude * Math.cos(theta) > 0
+              });
+            }
+          }
+
+          x0 = x1;
+          y0 = y1;
+        }
+
+        const stableRoots = roots.filter(root => root.stable);
+        return {
+          roots,
+          selected: stableRoots[0] || roots[0]
+        };
+      }
+
+      function updateCrossSection(theta) {
+        const centerX = 205;
+        const centerY = 130;
+        const radius = 105;
+        const x = centerX + radius * Math.sin(theta);
+        const y = centerY - radius * Math.cos(theta);
+
+        arm.setAttribute("x2", x);
+        arm.setAttribute("y2", y);
+        ball.setAttribute("cx", x);
+        ball.setAttribute("cy", y);
+        weightArrow.setAttribute("x1", x);
+        weightArrow.setAttribute("y1", y);
+        weightArrow.setAttribute("x2", x);
+        weightArrow.setAttribute("y2", Math.min(240, y + 30));
+        thetaLabel.textContent = `theta = ${degrees(theta).toFixed(2)} degrees`;
+      }
+
+      function calculate() {
+        const OD = value("OD") / 1000;
+        const WT = value("WT") / 1000;
+        const L = value("L");
+        const E = value("E");
+        const nu = value("nu");
+        const W = value("W") * 1000;
+        const d = value("d");
+        const cableMoment = value("MCABLE") * 1000;
+        const ID = OD - 2 * WT;
+
+        const G = E / (2 * (1 + nu));
+        const J = Math.PI / 32 * (OD ** 4 - ID ** 4);
+        const k = G * 1e9 * J / L;
+        const gravityAmplitude = W * d;
+        const solution = solveEquilibria(k, gravityAmplitude, cableMoment);
+
+        if (!solution.selected) return;
+
+        const thetaB = solution.selected.theta;
+        const torque = k * thetaB;
+        const lambda = gravityAmplitude / k;
+        const stabilityMargin = k - gravityAmplitude * Math.cos(thetaB);
+        const stable = stabilityMargin > 0;
+
+        const kpiValues = [
+          ["Rotazione A", "0 degrees"],
+          ["Rotazione B", `${integer(degrees(thetaB))} degrees`],
+          ["Torque Moment A", `${integer(torque / 1000)} kN m`],
+          ["Torque Moment B", `${integer(torque / 1000)} kN m`],
+          ["G", `${integer(G)} GPa`],
+          ["GJ/L", `${integer(k / 1000)} kN m/rad`],
+          ["lambda", lambdaFormat(lambda)],
+          ["Equilibrio", stable ? "STABILE" : "INSTABILE"]
+        ];
+
+        kpis.innerHTML = kpiValues
+          .map((item, index) => `
+            <div class="card kpi">
+              <small>${item[0]}</small>
+              <strong class="${index === 7 ? (stable ? "stable" : "unstable") : ""}">
+                ${item[1]}
+              </strong>
+            </div>
+          `)
+          .join("");
+
+        stabilityCriterion.innerHTML = `
+          Criterio: Delta_s = GJ/L - Wd cos(theta_B) =
+          <strong>${integer(stabilityMargin / 1000)} kN m/rad</strong>.
+        `;
+
+        updateCrossSection(thetaB);
+      }
+
+      function buildInputs() {
+        fields.innerHTML = inputDefinitions
+          .map(definition => {
+            const [id, label, unit, minimum, maximum, step] = definition;
+            return `
+              <div class="field">
+                <div class="field-header">
+                  <label for="${id}Number">${label}</label>
+                  <span>
+                    <input
+                      id="${id}Number"
+                      type="number"
+                      min="${minimum}"
+                      max="${maximum}"
+                      step="${step}"
+                      value="${defaults[id]}"
+                    />
+                    ${unit}
+                  </span>
+                </div>
+                <input
+                  id="${id}Range"
+                  type="range"
+                  min="${minimum}"
+                  max="${maximum}"
+                  step="${step}"
+                  value="${defaults[id]}"
+                />
+              </div>
+            `;
+          })
+          .join("");
+
+        inputDefinitions.forEach(definition => {
+          const id = definition[0];
+          const numberInput = document.getElementById(`${id}Number`);
+          const rangeInput = document.getElementById(`${id}Range`);
+
+          numberInput.addEventListener("input", () => {
+            rangeInput.value = numberInput.value;
+            calculate();
+          });
+
+          rangeInput.addEventListener("input", () => {
+            numberInput.value = rangeInput.value;
+            calculate();
+          });
+        });
+      }
+
+      reset.addEventListener("click", () => {
+        inputDefinitions.forEach(definition => {
+          const id = definition[0];
+          document.getElementById(`${id}Number`).value = defaults[id];
+          document.getElementById(`${id}Range`).value = defaults[id];
+        });
+        calculate();
+      });
+
+      buildInputs();
+      calculate();
+    </script>
+  </body>
+</html>
