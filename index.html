@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>
-            Torsion Solver V6
+            Torsion Solver V1
         </title>
         <style>
             :root {
@@ -349,7 +349,7 @@
             </div>
         </main>
         <script>
-            const D=[['OD','OD','mm',323.9,20,1500,.1,'Geometria'],['WT','WT','mm',12.7,.5,100,.1],['L','L','m',10,.1,100,.1],['E','E','GPa',210,1,500,.5,'Materiale'],['nu','ν','–',.3,-.99,.499,.001],['W','W','kN',100,0,5000,1,'Carichi in B'],['d','d','m',1,0,20,.01],['MC','M_CABLE','kN·m',100,-10000,10000,1]];
+            const D=[['OD','OD','mm',323.9,20,1500,.1,'Geometria'],['WT','WT','mm',12.7,.5,100,.1],['L','L','m',100,10,2000,10],['E','E','GPa',210,1,500,.5,'Materiale'],['nu','ν','–',.3,0,0.5,.01],['W','W','kN',100,0,5000,1,'Carichi in B'],['d','d','m',1,0,20,.01],['MC','M_CABLE','kN·m',100,-10000,10000,1]];
             let h='';
             D.forEach(x=> {
                 if(x[7])h+=`<h3 class=sec>${x[7]}</h3>`; h+=`<div class=field><div class=fh><label>${x[1]}</label><span><input id=${x[0]}n type=number value=${x[3]} step=${x[6]}> ${x[2]}</span></div><input id=${x[0]}r type=range min=${x[4]} max=${x[5]} step=${x[6]} value=${x[3]}></div>`
