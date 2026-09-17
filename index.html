@@ -1,172 +1,176 @@
-
 <!doctype html>
-<html lang="it">
+<html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>
-            Torsion Solver V1
-        </title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Torsion Solver V1</title>
         <style>
             :root {
-                --b:#2563eb;
-                --p:#7c3aed;
-                --g:#067647;
-                --r:#b42318;
-                --bg:#f4f7fb;
-                --m:#667085
+                --b: #2563eb;
+                --p: #7c3aed;
+                --g: #067647;
+                --r: #b42318;
+                --bg: #f4f7fb;
+                --m: #667085;
             }
             * {
-                box-sizing:border-box
+                box-sizing: border-box;
             }
             body {
-                margin:0;
-                background:var(--bg);
-                font-family:Segoe UI,Arial;
-                color:#172033
+                margin: 0;
+                background: var(--bg);
+                font-family:
+                    Segoe UI,
+                    Arial;
+                color: #172033;
             }
             main {
-                max-width:1450px;
-                margin:auto;
-                padding:22px
+                max-width: 1450px;
+                margin: auto;
+                padding: 22px;
             }
             .head {
-                display:flex;
-                justify-content:space-between;
-                align-items:end
+                display: flex;
+                justify-content: space-between;
+                align-items: end;
             }
             .layout {
-                display:grid;
-                grid-template-columns:380px 1fr;
-                gap:18px;
-                margin-top:18px
+                display: grid;
+                grid-template-columns: 380px 1fr;
+                gap: 18px;
+                margin-top: 18px;
             }
             .card {
-                background:#fff;
-                border:1px solid #e4e7ec;
-                border-radius:17px;
-                padding:18px;
-                box-shadow:0 4px 14px #1018280d
+                background: #fff;
+                border: 1px solid #e4e7ec;
+                border-radius: 17px;
+                padding: 18px;
+                box-shadow: 0 4px 14px #1018280d;
             }
             .field {
-                margin:13px 0
+                margin: 13px 0;
             }
             .fh {
-                display:flex;
-                justify-content:space-between;
-                align-items:center
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
             .fh input {
-                width:105px;
-                padding:7px;
-                text-align:right;
-                border:1px solid #d0d5dd;
-                border-radius:8px
+                width: 105px;
+                padding: 7px;
+                text-align: right;
+                border: 1px solid #d0d5dd;
+                border-radius: 8px;
             }
-            .field input[type=range] {
-                width:100%;
-                accent-color:var(--b)
+            .field input[type="range"] {
+                width: 100%;
+                accent-color: var(--b);
             }
             .sec {
-                border-top:1px solid #e4e7ec;
-                padding-top:13px
+                border-top: 1px solid #e4e7ec;
+                padding-top: 13px;
             }
             .stack {
-                display:flex;
-                flex-direction:column;
-                gap:18px
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
             }
             .kpis {
-                display:grid;
-                grid-template-columns:repeat(4,1fr);
-                gap:10px
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
             }
             .kpi small {
-                color:var(--m);
-                font-size:10px;
-                text-transform:uppercase
+                color: var(--m);
+                font-size: 10px;
+                text-transform: uppercase;
             }
             .kpi strong {
-                display:block;
-                margin-top:6px;
-                font-size:18px
+                display: block;
+                margin-top: 6px;
+                font-size: 18px;
             }
-            .sketches,.plots {
-                display:grid;
-                grid-template-columns:1fr 1fr;
-                gap:14px
+            .sketches,
+            .plots {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
             }
             .sketch {
-                border:1px solid #e4e7ec;
-                border-radius:12px;
-                padding:8px
+                border: 1px solid #e4e7ec;
+                border-radius: 12px;
+                padding: 8px;
             }
             .sketch svg {
-                width:100%;
-                height:245px
+                width: 100%;
+                height: 245px;
             }
             .eqs {
-                display:grid;
-                grid-template-columns:repeat(3,1fr);
-                gap:9px
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 9px;
             }
             .eq {
-                background:#f2f4f7;
-                border-radius:9px;
-                padding:12px;
-                font:13px Consolas,monospace
+                background: #f2f4f7;
+                border-radius: 9px;
+                padding: 12px;
+                font:
+                    13px Consolas,
+                    monospace;
             }
             .plot {
-                height:300px
+                height: 300px;
             }
             .wide {
-                grid-column:1/-1
+                grid-column: 1/-1;
             }
             .moment {
-                height:390px
+                height: 390px;
             }
             canvas {
-                width:100%;
-                height:100%
+                width: 100%;
+                height: 100%;
             }
             .good {
-                color:var(--g)
+                color: var(--g);
             }
             .bad {
-                color:var(--r)
+                color: var(--r);
             }
             .muted {
-                color:var(--m);
-                font-size:12px
+                color: var(--m);
+                font-size: 12px;
             }
             .btn {
-                padding:9px 13px;
-                background:#fff;
-                border:1px solid #d0d5dd;
-                border-radius:9px;
-                font-weight:700
+                padding: 9px 13px;
+                background: #fff;
+                border: 1px solid #d0d5dd;
+                border-radius: 9px;
+                font-weight: 700;
             }
             .err {
-                display:none;
-                color:var(--r);
-                background:#fef3f2;
-                padding:12px;
-                border-radius:9px
+                display: none;
+                color: var(--r);
+                background: #fef3f2;
+                padding: 12px;
+                border-radius: 9px;
             }
-            @media(max-width:1000px) {
+            @media (max-width: 1000px) {
                 .layout {
-                    grid-template-columns:1fr
+                    grid-template-columns: 1fr;
                 }
                 .kpis {
-                    grid-template-columns:repeat(2,1fr)
+                    grid-template-columns: repeat(2, 1fr);
                 }
             }
-            @media(max-width:700px) {
-                .sketches,.plots,.eqs {
-                    grid-template-columns:1fr
+            @media (max-width: 700px) {
+                .sketches,
+                .plots,
+                .eqs {
+                    grid-template-columns: 1fr;
                 }
                 .wide {
-                    grid-column:auto
+                    grid-column: auto;
                 }
             }
         </style>
@@ -175,173 +179,199 @@
         <main>
             <div class="head">
                 <div>
-                    <small style="color:var(--b);font-weight:800">
-                        TORSIONE NON LINEARE
-                    </small>
-                    <h1>
-                        Tubo incastrato in A, carichi in B
-                    </h1>
-                    <div class="muted">
-                        Convenzione: θ=0° con W sopra B; θ=180° con W sotto B.
-                    </div>
+                    <small style="color: var(--b); font-weight: 800">NONLINEAR TORSION</small>
+                    <h1>Pipe Fixed at A, Loads Applied at B</h1>
+                    <div class="muted">Convention: θ=0° with W above B; θ=180° with W below B.</div>
                 </div>
-                <button class="btn" id="reset">
-                    ↻ Ripristina
-                </button>
+                <button class="btn" id="reset">↻ Reset</button>
             </div>
             <div class="layout">
                 <aside class="card">
-                    <h2>
-                        Dati di input
-                    </h2>
-                    <div id="fields">
-                    </div>
+                    <h2>Input Parameters</h2>
+                    <div id="fields"></div>
                 </aside>
                 <section class="stack">
-                    <div id="err" class="err">
-                    </div>
-                    <div id="kpis" class="kpis">
-                    </div>
+                    <div id="err" class="err"></div>
+                    <div id="kpis" class="kpis"></div>
                     <div class="card">
-                        <h2>
-                            Schema meccanico
-                        </h2>
+                        <h2>Mechanical Model</h2>
                         <div class="sketches">
                             <div class="sketch">
-                                <b>
-                                    Schema statico longitudinale
-                                </b>
-                                <svg viewBox="0 0 700 245">
+                                <b>Longitudinal Free-Body Diagram</b
+                                ><svg viewBox="0 0 700 245">
                                     <defs>
-                                        <marker id="ab" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-                                            <path d="M0 0L0 6L8 3z" fill="#2563eb"/>
+                                        <marker
+                                            id="ab"
+                                            markerWidth="9"
+                                            markerHeight="9"
+                                            refX="7"
+                                            refY="3"
+                                            orient="auto"
+                                        >
+                                            <path d="M0 0L0 6L8 3z" fill="#2563eb" />
                                         </marker>
-                                        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-                                            <path d="M0 0L0 6L8 3z" fill="#b42318"/>
+                                        <marker
+                                            id="ar"
+                                            markerWidth="9"
+                                            markerHeight="9"
+                                            refX="7"
+                                            refY="3"
+                                            orient="auto"
+                                        >
+                                            <path d="M0 0L0 6L8 3z" fill="#b42318" />
                                         </marker>
                                     </defs>
-                                    <line x1="70" y1="35" x2="70" y2="210" stroke="#344054" stroke-width="4"/>
-                                    <path d="M25 55L70 28M25 90L70 63M25 125L70 98M25 160L70 133M25 195L70 168M25 230L70 203" stroke="#344054"/>
-                                    <line x1="70" y1="150" x2="540" y2="150" stroke="#98a2b3" stroke-width="15"/>
-                                    <circle cx="540" cy="150" r="24" fill="#fff" stroke="#344054" stroke-width="2"/>
-                                    <line x1="540" y1="150" x2="540" y2="50" stroke="#344054" stroke-width="6"/>
-                                    <circle cx="540" cy="50" r="18" fill="#fdb022" stroke="#b54708" stroke-width="2"/>
-                                    <line x1="540" y1="50" x2="540" y2="93" stroke="#b42318" stroke-width="3" marker-end="url(#ar)"/>
-                                    <path d="M498 205C555 230 610 185 590 132" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#ab)"/>
-                                    <line x1="605" y1="50" x2="605" y2="150" stroke="#475467" stroke-width="2"/>
-                                    <text x="54" y="235">
-                                        A
-                                    </text>
-                                    <text x="530" y="180">
-                                        B
-                                    </text>
-                                    <text x="555" y="80" fill="#b42318">
-                                        W
-                                    </text>
-                                    <text x="620" y="105">
-                                        d
-                                    </text>
+                                    <line x1="70" y1="35" x2="70" y2="210" stroke="#344054" stroke-width="4" />
+                                    <path
+                                        d="M25 55L70 28M25 90L70 63M25 125L70 98M25 160L70 133M25 195L70 168M25 230L70 203"
+                                        stroke="#344054"
+                                    />
+                                    <line x1="70" y1="150" x2="540" y2="150" stroke="#98a2b3" stroke-width="15" />
+                                    <circle cx="540" cy="150" r="24" fill="#fff" stroke="#344054" stroke-width="2" />
+                                    <line x1="540" y1="150" x2="540" y2="50" stroke="#344054" stroke-width="6" />
+                                    <circle cx="540" cy="50" r="18" fill="#fdb022" stroke="#b54708" stroke-width="2" />
+                                    <line
+                                        x1="540"
+                                        y1="50"
+                                        x2="540"
+                                        y2="93"
+                                        stroke="#b42318"
+                                        stroke-width="3"
+                                        marker-end="url(#ar)"
+                                    />
+                                    <path
+                                        d="M498 205C555 230 610 185 590 132"
+                                        fill="none"
+                                        stroke="#2563eb"
+                                        stroke-width="4"
+                                        marker-end="url(#ab)"
+                                    />
+                                    <text x="54" y="235">A</text>
+                                    <text x="530" y="180">B</text>
+                                    <text x="555" y="80" fill="#b42318">W</text>
+                                    <text x="620" y="105">d</text>
                                     <text x="500" y="230" fill="#2563eb">
                                         M
-                                        <tspan baseline-shift="sub" font-size="10">
-                                            CABLE
-                                        </tspan>
+                                        <tspan baseline-shift="sub" font-size="10">CABLE</tspan>
                                     </text>
-                                    <text x="290" y="137">
-                                        L, OD, WT, E, ν
-                                    </text>
+                                    <text x="290" y="137">L, OD, WT, E, ν</text>
                                 </svg>
                             </div>
                             <div class="sketch">
-                                <b>
-                                    Sezione trasversale in B
-                                </b>
-                                <svg viewBox="0 0 430 245">
+                                <b>Cross Section at B</b
+                                ><svg viewBox="0 0 430 245">
                                     <defs>
-                                        <marker id="ap" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                                            <path d="M0 0L0 6L7 3z" fill="#7c3aed"/>
+                                        <marker
+                                            id="ap"
+                                            markerWidth="8"
+                                            markerHeight="8"
+                                            refX="6"
+                                            refY="3"
+                                            orient="auto"
+                                        >
+                                            <path d="M0 0L0 6L7 3z" fill="#7c3aed" />
+                                        </marker>
+                                        <marker
+                                            id="aw"
+                                            markerWidth="8"
+                                            markerHeight="8"
+                                            refX="6"
+                                            refY="3"
+                                            orient="auto"
+                                        >
+                                            <path d="M0 0L0 6L7 3z" fill="#b42318" />
                                         </marker>
                                     </defs>
-                                    <line x1="205" y1="12" x2="205" y2="235" stroke="#d0d5dd" stroke-dasharray="5 5"/>
-                                    <line x1="70" y1="130" x2="360" y2="130" stroke="#d0d5dd" stroke-dasharray="5 5"/>
-                                    <circle cx="205" cy="130" r="25" fill="#fff" stroke="#344054" stroke-width="2"/>
-                                    <line x1="205" y1="130" x2="205" y2="25" stroke="#98a2b3" stroke-width="4" stroke-dasharray="7 6"/>
-                                    <circle cx="205" cy="25" r="13" fill="#fff4d6" stroke="#f79009" stroke-dasharray="4 3"/>
-                                    <text x="220" y="30" fill="#b54708">
-                                        W₀, θ=0°
-                                    </text>
-                                    <line id="arm" x1="205" y1="130" x2="205" y2="25" stroke="#344054" stroke-width="6"/>
-                                    <circle id="ball" cx="205" cy="25" r="17" fill="#fdb022" stroke="#b54708" stroke-width="2"/>
-                                    <line id="warrow" x1="205" y1="25" x2="205" y2="58" stroke="#b42318" stroke-width="3"/>
-                                    <text id="wlab" x="225" y="60">
-                                        W(θ)
-                                    </text>
-                                    <path id="arc" d="M205 67A63 63 0 0 1 250 85" fill="none" stroke="#7c3aed" stroke-width="3" marker-end="url(#ap)"/>
-                                    <text id="tlabel" x="245" y="78" fill="#7c3aed">
-                                        θ
-                                    </text>
-                                    <text x="197" y="136" font-weight="700">
-                                        B
-                                    </text>
-                                    <text x="365" y="135">
-                                        +x
-                                    </text>
-                                    <text x="212" y="14">
-                                        +y
-                                    </text>
+                                    <line x1="205" y1="12" x2="205" y2="235" stroke="#d0d5dd" stroke-dasharray="5 5" />
+                                    <line x1="70" y1="130" x2="360" y2="130" stroke="#d0d5dd" stroke-dasharray="5 5" />
+                                    <circle cx="205" cy="130" r="25" fill="#fff" stroke="#344054" stroke-width="2" />
+                                    <line
+                                        x1="205"
+                                        y1="130"
+                                        x2="205"
+                                        y2="25"
+                                        stroke="#98a2b3"
+                                        stroke-width="4"
+                                        stroke-dasharray="7 6"
+                                    />
+                                    <circle
+                                        cx="205"
+                                        cy="25"
+                                        r="13"
+                                        fill="#fff4d6"
+                                        stroke="#f79009"
+                                        stroke-dasharray="4 3"
+                                    />
+                                    <text x="220" y="30" fill="#b54708">W₀, θ=0°</text>
+                                    <line
+                                        id="arm"
+                                        x1="205"
+                                        y1="130"
+                                        x2="205"
+                                        y2="25"
+                                        stroke="#344054"
+                                        stroke-width="6"
+                                    />
+                                    <circle
+                                        id="ball"
+                                        cx="205"
+                                        cy="25"
+                                        r="17"
+                                        fill="#fdb022"
+                                        stroke="#b54708"
+                                        stroke-width="2"
+                                    />
+                                    <line
+                                        id="warrow"
+                                        x1="205"
+                                        y1="25"
+                                        x2="205"
+                                        y2="62"
+                                        stroke="#b42318"
+                                        stroke-width="3"
+                                        marker-end="url(#aw)"
+                                    />
+                                    <text id="wlab" x="225" y="60">W(θ)</text>
+                                    <path
+                                        id="arc"
+                                        d="M205 67A63 63 0 0 1 250 85"
+                                        fill="none"
+                                        stroke="#7c3aed"
+                                        stroke-width="3"
+                                        marker-end="url(#ap)"
+                                    />
+                                    <text id="tlabel" x="245" y="78" fill="#7c3aed">θ</text>
+                                    <text x="197" y="136" font-weight="700">B</text>
+                                    <text x="365" y="135">+x</text>
+                                    <text x="212" y="14">+y</text>
                                 </svg>
                                 <div class="muted">
-                                    Tratteggio: riferimento θ=0° sopra B. Giallo: posizione calcolata.
+                                    Dashed outline: reference position θ=0° above B. Yellow: computed position.
                                 </div>
                             </div>
                         </div>
                         <div class="eqs">
-                            <div class="eq">
-                                G=E/[2(1+ν)]
-                            </div>
-                            <div class="eq">
-                                J=π/32[OD⁴−(OD−2WT)⁴]
-                            </div>
-                            <div class="eq">
-                                (GJ/L)θ=M
-                                <sub>
-                                    CABLE
-                                </sub>
-                                +Wd sinθ
-                            </div>
+                            <div class="eq">G=E/[2(1+ν)]</div>
+                            <div class="eq">J=π/32[OD⁴−(OD−2WT)⁴]</div>
+                            <div class="eq">(GJ/L)θ=M<sub>CABLE</sub>+Wd sinθ</div>
                         </div>
-                        <div id="crit" class="eq" style="margin-top:10px">
-                        </div>
+                        <div id="crit" class="eq" style="margin-top: 10px"></div>
                     </div>
                     <div class="plots">
                         <div class="card">
-                            <b>
-                                Momento torcente lungo A–B
-                            </b>
-                            <div class="plot">
-                                <canvas id="ct">
-                                </canvas>
-                            </div>
+                            <b>Torque Distribution Along A–B</b>
+                            <div class="plot"><canvas id="ct"></canvas></div>
                         </div>
                         <div class="card">
-                            <b>
-                                Angolo di torsione lungo A–B
-                            </b>
-                            <div class="plot">
-                                <canvas id="ca">
-                                </canvas>
-                            </div>
+                            <b>Twist Angle Distribution Along A–B</b>
+                            <div class="plot"><canvas id="ca"></canvas></div>
                         </div>
                         <div class="card wide">
-                            <b>
-                                Momenti vs θ
-                            </b>
-                            <div class="moment">
-                                <canvas id="cm">
-                                </canvas>
-                            </div>
+                            <b>Moment Equilibrium vs θ</b>
+                            <div class="moment"><canvas id="cm"></canvas></div>
                             <div class="muted">
-                                Blu: M_tube. Arancio: M_ext. Verde pieno: equilibrio stabile. Rosso vuoto: instabile.
+                                Blue: M_tube. Orange: M_ext. Solid green: stable equilibrium. Open red: unstable
+                                equilibrium.
                             </div>
                         </div>
                     </div>
@@ -349,195 +379,265 @@
             </div>
         </main>
         <script>
-            const D=[['OD','OD','mm',323.9,20,1500,.1,'Geometria'],['WT','WT','mm',12.7,.5,100,.1],['L','L','m',100,10,2000,10],['E','E','GPa',210,1,500,.5,'Materiale'],['nu','ν','–',.3,0,0.5,.01],['W','W','kN',100,0,5000,1,'Carichi in B'],['d','d','m',1,0,20,.01],['MC','M-Cable','kN·m',0,0,2000,50]];
-            let h='';
-            D.forEach(x=> {
-                if(x[7])h+=`<h3 class=sec>${x[7]}</h3>`; h+=`<div class=field><div class=fh><label>${x[1]}</label><span><input id=${x[0]}n type=number value=${x[3]} step=${x[6]}> ${x[2]}</span></div><input id=${x[0]}r type=range min=${x[4]} max=${x[5]} step=${x[6]} value=${x[3]}></div>`
-            }
-            );
-            fields.innerHTML=h;
-            D.forEach(x=> {
-                let n=document.getElementById(x[0]+'n'),r=document.getElementById(x[0]+'r'); n.oninput=()=> {
-                    r.value=n.value; calc()
-                }
-                ; r.oninput=()=> {
-                    n.value=r.value; calc()
-                }
-            }
-            );
-            reset.onclick=()=> {
-                D.forEach(x=> {
-                    document.getElementById(x[0]+'n').value=x[3]; document.getElementById(x[0]+'r').value=x[3]
-                }
-                );
-                calc()
-            }
-            ;
-            const V=x=>+document.getElementById(x+'n').value,deg=x=>x*180/Math.PI,F=(x,n=3)=>x.toLocaleString('it-IT', {
-                maximumFractionDigits:n
-            }
-            ),integer=x=>Math.round(x).toLocaleString('it-IT', {
-                maximumFractionDigits:0
-            }
-            ),lambdaFormat=x=>x.toLocaleString('it-IT', {
-                minimumFractionDigits:4,maximumFractionDigits:4
-            }
-            );
-            function solve(k,A,M) {
-                let f=t=>k*t-M-A*Math.sin(t),R=[],lo=-2*Math.PI,hi=2*Math.PI,N=16000,x0=lo,y0=f(lo);
-                for(let i=1; i<=N; i++) {
-                    let x1=lo+(hi-lo)*i/N,y1=f(x1);
-                    if(y0*y1<0||Math.abs(y0)<1e-7) {
-                        let a=x0,b=x1,fa=f(a);
-                        for(let q=0; q<80; q++) {
-                            let m=(a+b)/2,fm=f(m);
-                            if(fa*fm<=0)b=m;
+            const D = [
+                ["OD", "OD", "mm", 323.9, 20, 1500, 0.1, "Geometry"],
+                ["WT", "WT", "mm", 12.7, 0.5, 100, 0.1],
+                ["L", "L", "m", 100, 10, 2000, 10],
+                ["E", "E", "GPa", 210, 1, 500, 0.5, "Material Properties"],
+                ["nu", "ν", "–", 0.3, 0, 0.5, 0.01],
+                ["W", "W", "kN", 100, 0, 5000, 1, "Loads at B"],
+                ["d", "d", "m", 1, 0, 20, 0.01],
+                ["MC", "M-Cable", "kN·m", 0, 0, 2000, 50],
+            ];
+            let h = "";
+            D.forEach((x) => {
+                if (x[7]) h += `<h3 class=sec>${x[7]}</h3>`;
+                h += `<div class=field><div class=fh><label>${x[1]}</label><span><input id=${x[0]}n type=number value=${x[3]} step=${x[6]}> ${x[2]}</span></div><input id=${x[0]}r type=range min=${x[4]} max=${x[5]} step=${x[6]} value=${x[3]}></div>`;
+            });
+            fields.innerHTML = h;
+            D.forEach((x) => {
+                let n = document.getElementById(x[0] + "n"),
+                    r = document.getElementById(x[0] + "r");
+                n.oninput = () => {
+                    r.value = n.value;
+                    calc();
+                };
+                r.oninput = () => {
+                    n.value = r.value;
+                    calc();
+                };
+            });
+            reset.onclick = () => {
+                D.forEach((x) => {
+                    document.getElementById(x[0] + "n").value = x[3];
+                    document.getElementById(x[0] + "r").value = x[3];
+                });
+                calc();
+            };
+            const V = (x) => +document.getElementById(x + "n").value,
+                deg = (x) => (x * 180) / Math.PI,
+                F = (x, n = 3) => x.toLocaleString("en-US", { maximumFractionDigits: n }),
+                integer = (x) => Math.round(x).toLocaleString("en-US", { maximumFractionDigits: 0 });
+            function solve(k, A, M) {
+                let f = (t) => k * t - M - A * Math.sin(t),
+                    R = [],
+                    lo = -2 * Math.PI,
+                    hi = 2 * Math.PI,
+                    N = 16000,
+                    x0 = lo,
+                    y0 = f(lo);
+                for (let i = 1; i <= N; i++) {
+                    let x1 = lo + ((hi - lo) * i) / N,
+                        y1 = f(x1);
+                    if (y0 * y1 < 0 || Math.abs(y0) < 1e-7) {
+                        let a = x0,
+                            b = x1,
+                            fa = f(a);
+                        for (let q = 0; q < 80; q++) {
+                            let m = (a + b) / 2,
+                                fm = f(m);
+                            if (fa * fm <= 0) b = m;
                             else {
-                                a=m;
-                                fa=fm
+                                a = m;
+                                fa = fm;
                             }
                         }
-                        let t=(a+b)/2;
-                        if(!R.some(z=>Math.abs(z-t)<1e-6))R.push(t)
+                        let t = (a + b) / 2;
+                        if (!R.some((z) => Math.abs(z - t) < 1e-6)) R.push(t);
                     }
-                    x0=x1;
-                    y0=y1
+                    x0 = x1;
+                    y0 = y1;
                 }
-                let all=R.map(t=>( {
-                    t,s:k-A*Math.cos(t)>0,U:.5*k*t*t-M*t+A*Math.cos(t)
-                }
-                )),ss=all.filter(q=>q.s).sort((a,b)=>a.U-b.U);
-                return {
-                    all,q:ss[0]||all[0]
-                }
+                let all = R.map((t) => ({
+                        t,
+                        s: k - A * Math.cos(t) > 0,
+                        U: 0.5 * k * t * t - M * t + A * Math.cos(t),
+                    })),
+                    ss = all.filter((q) => q.s).sort((a, b) => a.U - b.U);
+                return { all, q: ss[0] || all[0] };
             }
             function step(span) {
-                let r=Math.max(span/6,1),p=10**Math.floor(Math.log10(r)),q=r/p;
-                return Math.max(1,(q<=1?1:q<=2?2:q<=5?5:10)*p)
+                let r = Math.max(span / 6, 1),
+                    p = 10 ** Math.floor(Math.log10(r)),
+                    q = r / p;
+                return Math.max(1, (q <= 1 ? 1 : q <= 2 ? 2 : q <= 5 ? 5 : 10) * p);
             }
-            function axes(c,w,h,x0,x1,y0,y1,xl,yl) {
-                let P= {
-                    l:70,r:18,t:18,b:48
-                }
-                ,X=x=>P.l+(x-x0)/(x1-x0)*(w-P.l-P.r),Y=y=>P.t+(y1-y)/(y1-y0)*(h-P.t-P.b),s=step(y1-y0);
-                for(let y=Math.ceil(y0/s)*s; y<=y1+s/100; y+=s) {
-                    let z=Math.abs(y)<1e-8?0:Math.round(y),py=Y(y);
+            function axes(c, w, h, x0, x1, y0, y1, xl, yl) {
+                let P = { l: 70, r: 18, t: 18, b: 48 },
+                    X = (x) => P.l + ((x - x0) / (x1 - x0)) * (w - P.l - P.r),
+                    Y = (y) => P.t + ((y1 - y) / (y1 - y0)) * (h - P.t - P.b),
+                    s = step(y1 - y0);
+                for (let y = Math.ceil(y0 / s) * s; y <= y1 + s / 100; y += s) {
+                    let z = Math.abs(y) < 1e-8 ? 0 : Math.round(y),
+                        py = Y(y);
                     c.beginPath();
-                    c.moveTo(P.l,py);
-                    c.lineTo(w-P.r,py);
-                    c.strokeStyle=z==0?'#475467':'#e4e7ec';
-                    c.lineWidth=z==0?2:1;
+                    c.moveTo(P.l, py);
+                    c.lineTo(w - P.r, py);
+                    c.strokeStyle = z == 0 ? "#475467" : "#e4e7ec";
+                    c.lineWidth = z == 0 ? 2 : 1;
                     c.stroke();
-                    c.fillStyle='#344054';
-                    c.font=z==0?'bold 11px Segoe UI':'11px Segoe UI';
-                    c.textAlign='right';
-                    c.fillText(String(z),P.l-8,py+4)
+                    c.fillStyle = "#344054";
+                    c.font = "11px Segoe UI";
+                    c.textAlign = "right";
+                    c.fillText(String(z), P.l - 8, py + 4);
                 }
-                for(let i=0; i<=6; i++) {
-                    let x=x0+(x1-x0)*i/6,px=X(x);
-                    c.fillStyle='#667085';
-                    c.font='11px Segoe UI';
-                    c.textAlign='center';
-                    c.fillText(String(Math.round(x)),px,h-P.b+19)
+                for (let i = 0; i <= 6; i++) {
+                    let x = x0 + ((x1 - x0) * i) / 6;
+                    c.textAlign = "center";
+                    c.fillText(String(Math.round(x)), X(x), h - P.b + 19);
                 }
-                c.fillText(xl,w/2,h-8);
+                c.fillText(xl, w / 2, h - 8);
                 c.save();
-                c.translate(14,h/2);
-                c.rotate(-Math.PI/2);
-                c.fillText(yl,0,0);
+                c.translate(14, h / 2);
+                c.rotate(-Math.PI / 2);
+                c.fillText(yl, 0, 0);
                 c.restore();
-                return {
-                    X,Y
-                }
+                return { X, Y };
             }
-            function plot(cv,data,key,col,yl) {
-                let r=cv.getBoundingClientRect(),z=devicePixelRatio||1,w=r.width,h=r.height,c=cv.getContext('2d');
-                cv.width=w*z;
-                cv.height=h*z;
-                c.scale(z,z);
-                let ys=data.map(q=>q[key]),mn=Math.min(0,...ys),mx=Math.max(0,...ys);
-                if(mx==mn) {
-                    mn-=1;
-                    mx+=1
+            function plot(cv, data, key, col, yl) {
+                let r = cv.getBoundingClientRect(),
+                    z = devicePixelRatio || 1,
+                    w = r.width,
+                    h = r.height,
+                    c = cv.getContext("2d");
+                cv.width = w * z;
+                cv.height = h * z;
+                c.scale(z, z);
+                let ys = data.map((q) => q[key]),
+                    mn = Math.min(0, ...ys),
+                    mx = Math.max(0, ...ys);
+                if (mx == mn) {
+                    mn--;
+                    mx++;
                 }
-                let s=step(mx-mn);
-                mn=Math.floor(mn/s)*s;
-                mx=Math.ceil(mx/s)*s;
-                let a=axes(c,w,h,0,data.at(-1).x,mn,mx,'x [m]',yl);
+                let s = step(mx - mn);
+                mn = Math.floor(mn / s) * s;
+                mx = Math.ceil(mx / s) * s;
+                let a = axes(c, w, h, 0, data.at(-1).x, mn, mx, "Length x [m]", yl);
                 c.beginPath();
-                data.forEach((q,i)=>i?c.lineTo(a.X(q.x),a.Y(q[key])):c.moveTo(a.X(q.x),a.Y(q[key])));
-                c.strokeStyle=col;
-                c.lineWidth=3;
-                c.stroke()
+                data.forEach((q, i) => (i ? c.lineTo(a.X(q.x), a.Y(q[key])) : c.moveTo(a.X(q.x), a.Y(q[key]))));
+                c.strokeStyle = col;
+                c.lineWidth = 3;
+                c.stroke();
             }
-            function mplot(cv,k,A,M,S) {
-                let r=cv.getBoundingClientRect(),z=devicePixelRatio||1,w=r.width,h=r.height,c=cv.getContext('2d');
-                cv.width=w*z;
-                cv.height=h*z;
-                c.scale(z,z);
-                let ds=Array.from( {
-                    length:721
-                }
-                ,(_,i)=> {
-                    let x=-360+i,t=x*Math.PI/180; return {
-                        x,a:k*t/1000,b:(M+A*Math.sin(t))/1000
-                    }
-                }
-                ),ys=ds.flatMap(q=>[q.a,q.b]),mn=Math.min(0,...ys),mx=Math.max(0,...ys),s=step(mx-mn);
-                mn=Math.floor(mn/s)*s;
-                mx=Math.ceil(mx/s)*s;
-                let zc=axes(c,w,h,-360,360,mn,mx,'θ [deg]','Momento [kN·m]');
-                [['a','#2563eb'],['b','#f79009']].forEach(([key,col])=> {
-                    c.beginPath(); ds.forEach((q,i)=>i?c.lineTo(zc.X(q.x),zc.Y(q[key])):c.moveTo(zc.X(q.x),zc.Y(q[key]))); c.strokeStyle=col; c.lineWidth=3; c.stroke()
-                }
-                );
-                S.all.forEach(q=> {
-                    c.beginPath(); c.arc(zc.X(deg(q.t)),zc.Y(k*q.t/1000),q===S.q?7:5,0,2*Math.PI); c.fillStyle=q.s?'#12b76a':'#fff'; c.strokeStyle=q.s?'#067647':'#b42318'; c.lineWidth=2; c.fill(); c.stroke()
-                }
-                )
+            function mplot(cv, k, A, M, S) {
+                let r = cv.getBoundingClientRect(),
+                    z = devicePixelRatio || 1,
+                    w = r.width,
+                    h = r.height,
+                    c = cv.getContext("2d");
+                cv.width = w * z;
+                cv.height = h * z;
+                c.scale(z, z);
+                let ds = Array.from({ length: 721 }, (_, i) => {
+                        let x = -360 + i,
+                            t = (x * Math.PI) / 180;
+                        return { x, a: (k * t) / 1000, b: (M + A * Math.sin(t)) / 1000 };
+                    }),
+                    ys = ds.flatMap((q) => [q.a, q.b]),
+                    mn = Math.min(0, ...ys),
+                    mx = Math.max(0, ...ys),
+                    s = step(mx - mn);
+                mn = Math.floor(mn / s) * s;
+                mx = Math.ceil(mx / s) * s;
+                let zc = axes(c, w, h, -360, 360, mn, mx, "θ [deg]", "Moment [kN·m]");
+                [
+                    ["a", "#2563eb"],
+                    ["b", "#f79009"],
+                ].forEach(([key, col]) => {
+                    c.beginPath();
+                    ds.forEach((q, i) => (i ? c.lineTo(zc.X(q.x), zc.Y(q[key])) : c.moveTo(zc.X(q.x), zc.Y(q[key]))));
+                    c.strokeStyle = col;
+                    c.lineWidth = 3;
+                    c.stroke();
+                });
+                S.all.forEach((q) => {
+                    c.beginPath();
+                    c.arc(zc.X(deg(q.t)), zc.Y((k * q.t) / 1000), q === S.q ? 7 : 5, 0, 2 * Math.PI);
+                    c.fillStyle = q.s ? "#12b76a" : "#fff";
+                    c.strokeStyle = q.s ? "#067647" : "#b42318";
+                    c.lineWidth = 2;
+                    c.fill();
+                    c.stroke();
+                });
             }
             function cross(t) {
-                let cx=205,cy=130,R=105,x=cx+R*Math.sin(t),y=cy-R*Math.cos(t);
-                arm.setAttribute('x2',x);
-                arm.setAttribute('y2',y);
-                ball.setAttribute('cx',x);
-                ball.setAttribute('cy',y);
-                warrow.setAttribute('x1',x);
-                warrow.setAttribute('y1',y);
-                warrow.setAttribute('x2',x);
-                warrow.setAttribute('y2',Math.min(240,y+30));
-                wlab.setAttribute('x',x+18);
-                wlab.setAttribute('y',y+22);
-                let rr=63,ex=cx+rr*Math.sin(t),ey=cy-rr*Math.cos(t),large=Math.abs(t)>Math.PI?1:0,sweep=t>=0?1:0;
-                arc.setAttribute('d',`M${cx} ${cy-rr} A${rr} ${rr} 0 ${large} ${sweep} ${ex} ${ey}`);
-                tlabel.textContent=`θ = ${F(deg(t),2)}°`
+                let cx = 205,
+                    cy = 130,
+                    R = 105,
+                    x = cx + R * Math.sin(t),
+                    y = cy - R * Math.cos(t);
+                arm.setAttribute("x2", x);
+                arm.setAttribute("y2", y);
+                ball.setAttribute("cx", x);
+                ball.setAttribute("cy", y);
+                warrow.setAttribute("x1", x);
+                warrow.setAttribute("y1", y);
+                warrow.setAttribute("x2", x);
+                warrow.setAttribute("y2", Math.min(235, y + 37));
+                wlab.setAttribute("x", x + 18);
+                wlab.setAttribute("y", y + 22);
+                let rr = 63,
+                    ex = cx + rr * Math.sin(t),
+                    ey = cy - rr * Math.cos(t),
+                    large = Math.abs(t) > Math.PI ? 1 : 0,
+                    sweep = t >= 0 ? 1 : 0;
+                arc.setAttribute("d", `M${cx} ${cy - rr} A${rr} ${rr} 0 ${large} ${sweep} ${ex} ${ey}`);
+                tlabel.textContent = `θ = ${F(deg(t), 2)}°`;
             }
             function calc() {
-                let OD=V('OD')/1000,wt=V('WT')/1000,L=V('L'),E=V('E'),nu=V('nu'),W=V('W')*1000,d=V('d'),M=V('MC')*1000,Di=OD-2*wt;
-                if(!(OD>0&&wt>0&&Di>=0&&L>0&&E>0&&nu>-1&&nu<.5&&W>=0&&d>=0)) {
-                    err.style.display='block';
-                    err.textContent='Input non validi.';
-                    return
+                let OD = V("OD") / 1000,
+                    wt = V("WT") / 1000,
+                    L = V("L"),
+                    E = V("E"),
+                    nu = V("nu"),
+                    W = V("W") * 1000,
+                    d = V("d"),
+                    M = V("MC") * 1000,
+                    Di = OD - 2 * wt;
+                if (!(OD > 0 && wt > 0 && Di >= 0 && L > 0 && E > 0 && nu > -1 && nu < 0.5 && W >= 0 && d >= 0)) {
+                    err.style.display = "block";
+                    err.textContent = "Invalid input parameters.";
+                    return;
                 }
-                err.style.display='none';
-                let G=E/(2*(1+nu)),J=Math.PI/32*(OD**4-Di**4),k=G*1e9*J/L,A=W*d,S=solve(k,A,M);
-                if(!S.q)return;
-                let t=S.q.t,Mg=A*Math.sin(t),T=k*t,lam=A/k,mar=k-A*Math.cos(t),stable=mar>0,K=[['Rotazione A','0 degrees'],['Rotazione B',integer(deg(t))+' degrees'],['Torque Moment A',integer(T/1000)+' kN m'],['Torque Moment B',integer(T/1000)+' kN m'],['G',integer(G)+' GPa'],['GJ/L',integer(k/1000)+' kN m/rad'],['lambda',lambdaFormat(lam)],['Equilibrio',stable?'STABILE':'INSTABILE']];
-                kpis.innerHTML=K.map((q,i)=>`<div class="card kpi"><small>${q[0]}</small><strong class=${i==7?(stable?'good':'bad'):''}>${q[1]}</strong></div>`).join('');
-                crit.innerHTML=`Δ_s=GJ/L−Wd cosθ_B=<b>${F(mar/1000)} kN·m/rad</b> → ${stable?'stabile':'instabile'}; λ=WdL/GJ=<b>${F(lam,4)}</b>.`;
-                let ds=Array.from( {
-                    length:101
-                }
-                ,(_,i)=>( {
-                    x:L*i/100,T:T/1000,a:deg(t)*i/100
-                }
-                ));
-                plot(ct,ds,'T','#2563eb','T [kN·m]');
-                plot(ca,ds,'a','#7c3aed','θ [deg]');
-                mplot(cm,k,A,M,S);
-                cross(t)
+                err.style.display = "none";
+                let G = E / (2 * (1 + nu)),
+                    J = (Math.PI / 32) * (OD ** 4 - Di ** 4),
+                    k = (G * 1e9 * J) / L,
+                    A = W * d,
+                    S = solve(k, A, M);
+                if (!S.q) return;
+                let t = S.q.t,
+                    T = k * t,
+                    lam = A / k,
+                    mar = k - A * Math.cos(t),
+                    stable = mar > 0,
+                    K = [
+                        ["Rotation at A", "0 degrees"],
+                        ["Rotation at B", integer(deg(t)) + " degrees"],
+                        ["Torque Moment at A", integer(T / 1000) + " kN·m"],
+                        ["Torque Moment at B", integer(T / 1000) + " kN·m"],
+                        ["G", integer(G) + " GPa"],
+                        ["GJ/L", integer(k / 1000) + " kN·m/rad"],
+                        ["λ", lam.toFixed(4)],
+                        ["Equilibrium", stable ? "STABLE" : "UNSTABLE"],
+                    ];
+                kpis.innerHTML = K.map(
+                    (q, i) =>
+                        `<div class="card kpi"><small>${q[0]}</small><strong class=${i == 7 ? (stable ? "good" : "bad") : ""}>${q[1]}</strong></div>`,
+                ).join("");
+                crit.innerHTML = `Δ<sub>s</sub>=GJ/L−Wd cosθ<sub>B</sub>=<b>${F(mar / 1000)} kN·m/rad</b> → ${stable ? "stable" : "unstable"}; λ=WdL/GJ=<b>${F(lam, 4)}</b>.`;
+                let ds = Array.from({ length: 101 }, (_, i) => ({
+                    x: (L * i) / 100,
+                    T: T / 1000,
+                    a: (deg(t) * i) / 100,
+                }));
+                plot(ct, ds, "T", "#2563eb", "Torque [kN·m]");
+                plot(ca, ds, "a", "#7c3aed", "Twist Angle [deg]");
+                mplot(cm, k, A, M, S);
+                cross(t);
             }
-            addEventListener('resize',calc);
+            addEventListener("resize", calc);
             calc();
         </script>
     </body>
